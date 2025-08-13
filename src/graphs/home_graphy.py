@@ -1,4 +1,4 @@
-# src\graphs\home_graph.py
+# src\graphs\home_graphy.py
 from typing import Dict, Any
 from langgraph.graph import StateGraph, END
 from src.utils import update_partial_state, append_message
@@ -11,41 +11,42 @@ class HomeGraph:
 
     def _build_graph(self):
         wf = StateGraph(dict)
-        wf.add_node("router", self._create_router_node)
-        wf.add_node("process_initial", self._process_initial)
-        wf.add_node("process_user_message", self._process_user_message)
 
+        # Define nodes
+        wf.add_node("router", self._router)
+        wf.add_node("company_agent", self._company_agent)
+        wf.add_node("product_agent", self._product_agent)
+
+        # Entry point
         wf.set_entry_point("router")
 
+        # Routing logic based on stage
         wf.add_conditional_edges(
             "router",
-            lambda s: s["route"],
+            lambda s: s.get("stage"),
             {
-                "process_initial": "process_initial",
-                "process_user_message": "process_user_message",
+                "onboarded": "company_agent",
+                "company_profile_completed": "product_agent",
             },
         )
 
-        wf.add_edge("process_initial", END)
-        wf.add_edge("process_user_message", END)
+        wf.add_edge("company_agent", END)
+        wf.add_edge("product_agent", END)
 
         return wf.compile()
 
-    def _create_router_node(self, state: Dict[str, Any]) -> Dict[str, Any]:
-        return {
-            **state,
-            "route": "process_initial" if state.get("message_type") == "initial" else "process_user_message",
-        }
+    def _router(self, state: Dict[str, Any]) -> Dict[str, Any]:
+        return state  # Pass state directly; routing uses lambda above
 
-    async def _process_initial(self, state: Dict[str, Any]) -> Dict[str, Any]:
-        msg = "Welcome to home!"
+    async def _company_agent(self, state: Dict[str, Any]) -> Dict[str, Any]:
+        msg = "Let's fill in your company profile!"
         clean_state = append_message(state, "assistant", msg)
         clean_state["message"] = msg
         clean_state["message_type"] = "assistant"
         return clean_state
 
-    async def _process_user_message(self, state: Dict[str, Any]) -> Dict[str, Any]:
-        msg = f"You said: {state.get('user_message', '')}"
+    async def _product_agent(self, state: Dict[str, Any]) -> Dict[str, Any]:
+        msg = "Now let's add your products or services!"
         clean_state = append_message(state, "assistant", msg)
         clean_state["message"] = msg
         clean_state["message_type"] = "assistant"

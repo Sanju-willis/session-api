@@ -2,6 +2,6 @@
 from .home_graph import HomeGraph
 from .social_graph import SocialGraph
 from .analytics_graph import AnalyticsGraph
-from .base_graph import BaseGraph
+from .home_graphy import HomeGraph as HomeGraphy
 
-__all__ = ["HomeGraph", "SocialGraph", "AnalyticsGraph", "BaseGraph"]
+__all__ = ["HomeGraph", "SocialGraph", "AnalyticsGraph", "HomeGraphy"]
