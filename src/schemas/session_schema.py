@@ -1,0 +1,35 @@
+# src\schemas\session_schema.py
+from pydantic import BaseModel
+from typing import Dict, Any, Optional
+
+
+class SendMessageIn(BaseModel):
+    session_id: str
+    message: str
+    message_type: str = "user"
+
+
+class MessageOut(BaseModel):
+    message: str
+    message_type: str
+    timestamp: str
+
+
+class ChatResponseOut(BaseModel):
+    response: MessageOut
+    session_id: str
+    conversation_state: Optional[Dict[str, Any]] = None
+
+
+class StartSessionRequest(BaseModel):
+    module: str
+    productId: Optional[str] = None  # New field for product sessions
+
+
+class SessionResponse(BaseModel):
+    session_id: str
+    module: Optional[str] = None
+    thread_type: str
+    stage: str
+    next_action: str
+    parent_thread: Optional[str] = None  # Optional parent thread ID
