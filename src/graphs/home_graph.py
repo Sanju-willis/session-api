@@ -35,6 +35,16 @@ class HomeGraph:
         return wf.compile()
 
     def _router_node(self, state: Dict[str, Any]) -> Dict[str, Any]:
+        stage = state.get("stage")
+
+        next_action_map = {
+            "onboarded": "complete_company_profile",
+            "company_profile_completed": "add_products_services",
+            "products_added": "integrate_channels",
+            "channels_integrated": "explore_other_modules",
+        }
+
+        state["next_action"] = next_action_map.get(stage, "continue_setup")
         return state
 
     async def _company_node(self, state: Dict[str, Any]) -> Dict[str, Any]:

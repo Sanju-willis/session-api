@@ -15,16 +15,10 @@ class LangGraphService:
     ) -> Dict[str, Any]:
         thread_info = self.thread_manager.get_thread(user_id, company_id, module, thread_type, item_id)
 
-        # Build context based on thread type
-        context = {}
-        if thread_type == "company":
-            context = {"sub_module": "company_profile"}
-        elif thread_type == "product":
-            context = {"sub_module": "product", "product_id": item_id}
-        elif thread_type == "service":
-            context = {"sub_module": "service", "service_id": item_id}
+        context = self._build_context(thread_type, item_id)
 
         initial_state = build_initial_state(user_id, company_id, module, thread_info.stage, context)
+        
         persist_state(thread_info.thread_id, initial_state)
 
         return {
@@ -32,35 +26,16 @@ class LangGraphService:
             "thread_type": thread_type,
             "module": module,
             "stage": thread_info.stage,
-            "next_action": self._get_next_action(module, thread_info.stage, thread_type),
             "parent_thread": thread_info.parent_thread_id,
             **({"item_id": item_id} if item_id else {}),
         }
 
-    def _get_next_action(self, module: str, stage: str, thread_type: str = "module") -> str:
-        """Get next action based on module, stage, and thread type"""
-
-        # Thread-specific actions
+    def _build_context(self, thread_type: str, item_id: str = None) -> Dict[str, Any]:
+        """Returns context dict for initial state based on thread type"""
         if thread_type == "company":
-            return "setup_company_profile"
+            return {"sub_module": "company_profile"}
         elif thread_type == "product":
-            return "setup_product"
+            return {"sub_module": "product", "product_id": item_id}
         elif thread_type == "service":
-            return "setup_service"
-
-        # Module-specific actions (for module thread type)
-        action_map = {
-            "home": {
-                "onboarded": "complete_company_profile",
-                "company_profile_completed": "add_products_services",
-                "products_added": "integrate_channels",
-                "channels_integrated": "explore_other_modules",
-            },
-            "social": {"default": "setup_social_accounts"},
-            "analytics": {"default": "configure_analytics"},
-        }
-
-        module_actions = action_map.get(module, {})
-        return module_actions.get(stage, module_actions.get("default", "continue_setup"))
-
-  
+            return {"sub_module": "service", "service_id": item_id}
+        return {}

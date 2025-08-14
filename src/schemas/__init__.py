@@ -4,7 +4,7 @@ from .jwt_schema import UserContext
 from .session_schema import (
     SendMessageIn,
     MessageOut,
-    ChatResponseOut,
+   
     StartSessionRequest,
     SessionResponse,
 )
@@ -12,7 +12,7 @@ from .session_schema import (
 __all__ = [
     "SendMessageIn",
     "MessageOut",
-    "ChatResponseOut",
+   
     "StartSessionRequest",
     "SessionResponse",
     "UserContext",

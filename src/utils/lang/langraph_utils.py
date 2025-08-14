@@ -22,7 +22,6 @@ def build_initial_state(
 
 
 def persist_state(thread_id: str, state: ConversationState) -> None:
-
     config = {"configurable": {"thread_id": thread_id}}
     manager = LangGraphManager()
     with manager.get_app() as app:
@@ -52,3 +51,25 @@ def get_session_state(session_id: str) -> Optional[Dict[str, Any]]:
     except Exception as e:
         logger.warning(f"Could not retrieve state for session {session_id}: {e}")
         return None
+
+
+def update_partial_state(session_id: str, state: Dict[str, Any]) -> None:
+    try:
+        config = {"configurable": {"thread_id": session_id}}
+
+        clean_state = {
+            "user_id": state.get("user_id"),
+            "company_id": state.get("company_id"),
+            "module": state.get("module"),
+            "stage": state.get("stage"),
+            "step": state.get("step", 1),
+            "messages": state.get("messages", []),
+            "next_action": state.get("next_action", ""),
+        }
+
+        manager = LangGraphManager()
+        with manager.get_app() as app:
+            app.update_state(config, clean_state)
+            
+    except Exception as e:
+        logger.warning(f"[BaseGraph] Failed to update state for session {session_id}: {e}")

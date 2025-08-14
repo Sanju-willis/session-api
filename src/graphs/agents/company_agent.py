@@ -5,9 +5,10 @@ from langchain_openai import ChatOpenAI
 from src.config.settings import settings
 
 @tool
-async def fill_company_profile() -> str:
+def fill_company_profile() -> str:
     """Start onboarding by collecting company details."""
     return "Please share your company name, size, and industry."
+
 
 def get_company_agent():
     llm = ChatOpenAI(

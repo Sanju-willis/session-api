@@ -1,13 +1,13 @@
 # src\schemas\session_schema.py
 from pydantic import BaseModel
-from typing import Dict, Any, Optional
+from typing import Optional
 
 
 class StartSessionRequest(BaseModel):
     module: str
     thread_type: str
     item_id: Optional[str] = None
-    productId: Optional[str] = None # Default to module, can be overridden
+    productId: Optional[str] = None  # Default to module, can be overridden
 
 
 class SessionResponse(BaseModel):
@@ -15,7 +15,6 @@ class SessionResponse(BaseModel):
     module: Optional[str] = None
     thread_type: str
     stage: str
-    next_action: str
     parent_thread: Optional[str] = None  # Optional parent thread ID
 
 
@@ -30,9 +29,3 @@ class MessageOut(BaseModel):
     message_type: str
     timestamp: str
     session_id: str
-
-
-class ChatResponseOut(BaseModel):
-    response: MessageOut
-    session_id: str
-    conversation_state: Optional[Dict[str, Any]] = None

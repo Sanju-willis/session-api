@@ -27,7 +27,9 @@ class LangGraphManager:
     def _build_workflow(self) -> StateGraph:
 
         workflow = StateGraph(ConversationState)
+
         workflow.add_node("initialize", self._initialize_conversation)
+        
         workflow.set_entry_point("initialize")
         workflow.set_finish_point("initialize")
         return workflow
@@ -40,8 +42,3 @@ class LangGraphManager:
         return state
 
 
-# Usage:
-# manager = LangGraphManager()
-# with manager.get_app() as app:
-#     # Use app here
-#     pass

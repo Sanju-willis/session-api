@@ -3,6 +3,7 @@ import hashlib
 from typing import Optional
 from src.types_.thread_types import Module, ThreadType
 
+
 def generate_thread_id(
     user_id: str,
     company_id: str,
@@ -10,15 +11,13 @@ def generate_thread_id(
     thread_type: ThreadType = ThreadType.MODULE,
     item_id: Optional[str] = None,
 ) -> str:
-    """Generate unique thread ID based on parameters"""
-    
     key_parts = [user_id, company_id, module.value]
-    
+
     if thread_type != ThreadType.MODULE:
         key_parts.append(thread_type.value)
-    
+
     if item_id:
         key_parts.append(item_id)
-    
+
     key = ":".join(key_parts)
     return hashlib.md5(key.encode()).hexdigest()
