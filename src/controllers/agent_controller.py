@@ -7,7 +7,7 @@ from src.schemas import StartSessionRequest, SessionResponse
 
 
 async def module_session_ctrl(request: StartSessionRequest, user_ctx: ReqContext, db: Session) -> SessionResponse:
-    """Start module session controller"""
+
     try:
         service = LangGraphService()
         result = service.create_module_session(
@@ -23,7 +23,7 @@ async def module_session_ctrl(request: StartSessionRequest, user_ctx: ReqContext
 
 
 async def company_session_ctrl(request: StartSessionRequest, user_ctx: ReqContext, db: Session) -> SessionResponse:
-    """Start company session controller"""
+
     try:
         service = LangGraphService()
         result = service.create_company_session(user_id=user_ctx.user_id, company_id=user_ctx.company_id)
@@ -38,14 +38,14 @@ async def product_session_ctrl(
     request: StartSessionRequest,
     user_ctx: ReqContext,
     db: Session,
-    product_id: str,  # Add product_id parameter
+    product_id: str,
 ) -> SessionResponse:
-    """Start product session controller"""
     try:
         service = LangGraphService()
         result = service.create_product_session(
             user_id=user_ctx.user_id,
             company_id=user_ctx.company_id,
+            module=request.module,
             product_id=product_id,
         )
 

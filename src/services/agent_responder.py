@@ -1,6 +1,6 @@
 # src\services\agent_responder.py
 from typing import Optional
-from src.graphs import HomeGraphy, SocialGraph, AnalyticsGraph
+from src.graphs import HomeGraph, SocialGraph, AnalyticsGraph
 from src.types_.thread_types import Module
 from src.utils import setup_logging, get_session_state
 
@@ -12,7 +12,7 @@ DEFAULT_MESSAGE = "Hello! How can I assist you today?"
 class AgentRouter:
     def __init__(self):
         self._graphs = {
-            Module.HOME: HomeGraphy(),
+            Module.HOME: HomeGraph(),
             Module.SOCIAL: SocialGraph(),
             Module.ANALYTICS: AnalyticsGraph(),
         }
@@ -28,34 +28,6 @@ class AgentRouter:
 
 # Global router
 agent_router = AgentRouter()
-
-
-async def generate_agent_reply(session_id: str, module: Optional[str] = None) -> str:
-    try:
-        state = get_session_state(session_id)
-        if not state:
-         raise ValueError(f"No state found for session_id: {session_id}")
-
-        module = state.get("module", module)
-        graph = agent_router.get_graph(module)
-
-        response = await graph.invoke(
-            {
-                "session_id": session_id,
-                "message_type": "initial",
-                "module": module,
-                "stage": state.get("stage", "initial"),
-                "next_action": state.get("next_action", ""),
-                "user_id": state.get("user_id"),
-                "company_id": state.get("company_id"),
-                "messages": state.get("messages", []),
-            }
-        )
-
-        return response.get("message", DEFAULT_MESSAGE)
-    except Exception as e:
-        logger.error(f"Error generating initial reply for session {session_id}: {e}")
-        return DEFAULT_MESSAGE
 
 
 async def process_agent_message(session_id: str, message: str, module: Optional[str] = None) -> str:

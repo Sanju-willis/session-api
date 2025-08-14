@@ -14,7 +14,7 @@ class LangGraphManager:
 
     @contextmanager
     def get_app(self):
-        """Context manager for safe database handling"""
+
         try:
             self._conn, self._checkpointer = open_langraph_sqlite(self.db_path)
             workflow = self._build_workflow()
@@ -25,7 +25,7 @@ class LangGraphManager:
                 close_langraph_sqlite(self._conn)
 
     def _build_workflow(self) -> StateGraph:
-        """Separate workflow building logic"""
+
         workflow = StateGraph(ConversationState)
         workflow.add_node("initialize", self._initialize_conversation)
         workflow.set_entry_point("initialize")
@@ -33,7 +33,7 @@ class LangGraphManager:
         return workflow
 
     def _initialize_conversation(self, state: ConversationState):
-        """Initialize conversation state"""
+
         if not state.get("messages"):
             state["messages"] = []
             state["context"] = {}

@@ -7,6 +7,7 @@ from starlette import status
 import traceback
 from src.utils.logging import setup_logging
 from ..core.config import settings
+from .custom_exceptions import MissingEnvVarError
 
 logger = setup_logging(__name__)
 
@@ -76,3 +77,11 @@ async def handle_generic_error(request: Request, exc: Exception):
        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
        meta={"location": location} if settings.DEBUG else None
    )
+
+async def handle_missing_env_error(request: Request, exc: MissingEnvVarError):
+    logger.error(f"MissingEnvVarError: {str(exc)} | Path: {request.url}")
+    return http_error(
+        str(exc),
+        code="missing_env_var",
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+    )

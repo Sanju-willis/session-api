@@ -22,7 +22,7 @@ def build_initial_state(
 
 
 def persist_state(thread_id: str, state: ConversationState) -> None:
-    """Persist state to LangGraph using the given thread_id."""
+
     config = {"configurable": {"thread_id": thread_id}}
     manager = LangGraphManager()
     with manager.get_app() as app:

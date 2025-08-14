@@ -1,4 +1,4 @@
-# src\services\langraph_service.py
+# src\services\session_service.py
 from src.services.thread_manager import ThreadManager, Module, HomeStage
 from src.core.langraph_config import LangGraphManager
 from typing import Dict, Any
@@ -43,7 +43,8 @@ class LangGraphService:
             "parent_thread": thread_info.parent_thread_id,
         }
 
-    def create_product_session(self, user_id: str, company_id: str, product_id: str) -> Dict[str, Any]:
+    def create_product_session(self, user_id: str, company_id: str, module: str, product_id: str) -> Dict[str, Any]:
+        print(f"Creating product session for user {user_id}, company {company_id}, product {module}")
         thread_info = self.thread_manager.get_product_thread(user_id, company_id, product_id)
 
         initial_state = build_initial_state(

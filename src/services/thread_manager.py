@@ -34,6 +34,7 @@ class ThreadManager:
         )
 
     def get_company_thread(self, user_id: str, company_id: str) -> ThreadInfo:
+        
         home_thread_id = generate_thread_id(user_id, company_id, Module.HOME, ThreadType.MODULE)
 
         thread_id = generate_thread_id(user_id, company_id, Module.HOME, ThreadType.COMPANY)

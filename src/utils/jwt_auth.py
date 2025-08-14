@@ -1,5 +1,5 @@
 # src\utils\jwt_auth.py
-from fastapi import Depends, HTTPException, status, Request
+from fastapi import Depends, HTTPException, Request
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 from src.core.db import get_db

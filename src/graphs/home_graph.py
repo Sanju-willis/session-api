@@ -1,59 +1,68 @@
 # src\graphs\home_graph.py
-from typing import Dict, Any
 from langgraph.graph import StateGraph, END
+from typing import Dict, Any
+from .agents import get_company_agent, get_product_agent
 from src.utils import update_partial_state, append_message
 
 
 class HomeGraph:
     def __init__(self):
         self.name = "home"
-        self.graph = self._build_graph()
+        self.graph = self._build()
 
-    def _build_graph(self):
+    def _build(self):
         wf = StateGraph(dict)
-        wf.add_node("router", self._create_router_node)
-        wf.add_node("process_initial", self._process_initial)
-        wf.add_node("process_user_message", self._process_user_message)
 
+        # Nodes
+        wf.add_node("router", self._router_node)
+        wf.add_node("company_agent", self._company_node)
+        wf.add_node("product_agent", self._product_node)
+
+        # Entry
         wf.set_entry_point("router")
 
+        # Conditional routing
         wf.add_conditional_edges(
             "router",
-            lambda s: s["route"],
-            {
-                "process_initial": "process_initial",
-                "process_user_message": "process_user_message",
-            },
+            lambda state: state.get("stage"),
+            {"onboarded": "company_agent", "company_profile_completed": "product_agent"},
         )
 
-        wf.add_edge("process_initial", END)
-        wf.add_edge("process_user_message", END)
+        # Endpoints
+        wf.add_edge("company_agent", END)
+        wf.add_edge("product_agent", END)
 
         return wf.compile()
 
-    def _create_router_node(self, state: Dict[str, Any]) -> Dict[str, Any]:
-        return {
-            **state,
-            "route": "process_initial" if state.get("message_type") == "initial" else "process_user_message",
-        }
+    def _router_node(self, state: Dict[str, Any]) -> Dict[str, Any]:
+        return state
 
-    async def _process_initial(self, state: Dict[str, Any]) -> Dict[str, Any]:
-        msg = "Welcome to home!"
-        clean_state = append_message(state, "assistant", msg)
-        clean_state["message"] = msg
+    async def _company_node(self, state: Dict[str, Any]) -> Dict[str, Any]:
+        agent = get_company_agent()
+        response = await agent.ainvoke({"messages": [("user", "Start company onboarding")]})
+        final_message = response["messages"][-1].content
+
+        # Update state with message and append to conversation
+        clean_state = append_message(state, "assistant", final_message)
+        clean_state["message"] = final_message
         clean_state["message_type"] = "assistant"
         return clean_state
 
-    async def _process_user_message(self, state: Dict[str, Any]) -> Dict[str, Any]:
-        msg = f"You said: {state.get('user_message', '')}"
-        clean_state = append_message(state, "assistant", msg)
-        clean_state["message"] = msg
+    async def _product_node(self, state: Dict[str, Any]) -> Dict[str, Any]:
+        agent = get_product_agent()
+        response = await agent.ainvoke({"messages": [("user", "Let's collect product details")]})
+        final_message = response["messages"][-1].content
+
+        # Update state with message and append to conversation
+        clean_state = append_message(state, "assistant", final_message)
+        clean_state["message"] = final_message
         clean_state["message_type"] = "assistant"
         return clean_state
 
     async def invoke(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         result = await self.graph.ainvoke(input_data)
 
+        # Update session state if session_id exists
         session_id = input_data.get("session_id")
         if session_id and result:
             update_partial_state(session_id, result)

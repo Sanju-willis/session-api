@@ -1,4 +1,4 @@
-# src\types\conversation_type.py
+# src\types_\conversation_type.py
 from typing_extensions import TypedDict
 from typing import List, Any, Optional
 

@@ -15,5 +15,6 @@ async def send_message_ctrl(payload: SendMessageIn, db: OrmSession) -> MessageOu
     return MessageOut(
     message=response_message,
     message_type="assistant",
-    timestamp=datetime.now().isoformat()
-)
+    timestamp=datetime.now().isoformat(),
+    session_id=payload.session_id
+    )
