@@ -5,7 +5,9 @@ from typing import Dict, Any, Optional
 
 class StartSessionRequest(BaseModel):
     module: str
-    productId: Optional[str] = None
+    thread_type: str
+    item_id: Optional[str] = None
+    productId: Optional[str] = None # Default to module, can be overridden
 
 
 class SessionResponse(BaseModel):

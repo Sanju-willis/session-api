@@ -10,15 +10,15 @@ def generate_thread_id(
     thread_type: ThreadType = ThreadType.MODULE,
     item_id: Optional[str] = None,
 ) -> str:
-    if thread_type == ThreadType.MODULE:
-        key = f"{user_id}:{company_id}:{module.value}"
-    elif thread_type == ThreadType.COMPANY:
-        key = f"{user_id}:{company_id}:{module.value}:company"
-    elif thread_type == ThreadType.PRODUCT:
-        key = f"{user_id}:{company_id}:{module.value}:product:{item_id}"
-    elif thread_type == ThreadType.CHANNEL:
-        key = f"{user_id}:{company_id}:{module.value}:channel:{item_id}"
-    else:
-        raise ValueError("Unsupported thread type")
-
+    """Generate unique thread ID based on parameters"""
+    
+    key_parts = [user_id, company_id, module.value]
+    
+    if thread_type != ThreadType.MODULE:
+        key_parts.append(thread_type.value)
+    
+    if item_id:
+        key_parts.append(item_id)
+    
+    key = ":".join(key_parts)
     return hashlib.md5(key.encode()).hexdigest()

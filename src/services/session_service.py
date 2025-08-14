@@ -63,15 +63,4 @@ class LangGraphService:
         module_actions = action_map.get(module, {})
         return module_actions.get(stage, module_actions.get("default", "continue_setup"))
 
-    # Legacy methods for backward compatibility
-    def create_module_session(self, user_id: str, company_id: str, module: str) -> Dict[str, Any]:
-        """Legacy method - use create_session instead"""
-        return self.create_session(user_id, company_id, module, "module")
-
-    def create_company_session(self, user_id: str, company_id: str, module: str) -> Dict[str, Any]:
-        """Legacy method - use create_session instead"""
-        return self.create_session(user_id, company_id, module, "company")
-
-    def create_product_session(self, user_id: str, company_id: str, module: str, product_id: str) -> Dict[str, Any]:
-        """Legacy method - use create_session instead"""
-        return self.create_session(user_id, company_id, module, "product", product_id)
+  
