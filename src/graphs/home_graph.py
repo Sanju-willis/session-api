@@ -1,9 +1,8 @@
 # src\graphs\home_graph.py
 from langgraph.graph import StateGraph, END
 from typing import Dict, Any
-from .agents import get_company_agent, get_product_agent
-from src.utils import update_partial_state, append_message
-
+from .nodes import company_node, product_node, router_node
+from src.utils import update_partial_state
 
 class HomeGraph:
     def __init__(self):
@@ -13,10 +12,10 @@ class HomeGraph:
     def _build(self):
         wf = StateGraph(dict)
 
-        # Nodes
-        wf.add_node("router", self._router_node)
-        wf.add_node("company_agent", self._company_node)
-        wf.add_node("product_agent", self._product_node)
+        # Nodes - imported from separate files
+        wf.add_node("router", router_node)
+        wf.add_node("company_agent", company_node)
+        wf.add_node("product_agent", product_node)
 
         # Entry
         wf.set_entry_point("router")
@@ -33,41 +32,6 @@ class HomeGraph:
         wf.add_edge("product_agent", END)
 
         return wf.compile()
-
-    def _router_node(self, state: Dict[str, Any]) -> Dict[str, Any]:
-        stage = state.get("stage")
-
-        next_action_map = {
-            "onboarded": "complete_company_profile",
-            "company_profile_completed": "add_products_services",
-            "products_added": "integrate_channels",
-            "channels_integrated": "explore_other_modules",
-        }
-
-        state["next_action"] = next_action_map.get(stage, "continue_setup")
-        return state
-
-    async def _company_node(self, state: Dict[str, Any]) -> Dict[str, Any]:
-        agent = get_company_agent()
-        response = await agent.ainvoke({"messages": [("user", "Start company onboarding")]})
-        final_message = response["messages"][-1].content
-
-        # Update state with message and append to conversation
-        clean_state = append_message(state, "assistant", final_message)
-        clean_state["message"] = final_message
-        clean_state["message_type"] = "assistant"
-        return clean_state
-
-    async def _product_node(self, state: Dict[str, Any]) -> Dict[str, Any]:
-        agent = get_product_agent()
-        response = await agent.ainvoke({"messages": [("user", "Let's collect product details")]})
-        final_message = response["messages"][-1].content
-
-        # Update state with message and append to conversation
-        clean_state = append_message(state, "assistant", final_message)
-        clean_state["message"] = final_message
-        clean_state["message_type"] = "assistant"
-        return clean_state
 
     async def invoke(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         result = await self.graph.ainvoke(input_data)

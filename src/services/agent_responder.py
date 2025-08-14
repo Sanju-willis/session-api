@@ -3,7 +3,7 @@ from typing import Optional
 from src.graphs import HomeGraph, SocialGraph, AnalyticsGraph
 from src.types_ import Module
 from src.utils import setup_logging, get_session_state
-from pprint import pprint
+#from pprint import pprint
 
 logger = setup_logging(__name__)
 
@@ -34,10 +34,13 @@ async def process_agent_message(session_id: str, message: str, module: Optional[
         state = get_session_state(session_id)
         if not state:
             return "I couldn't find your session. Please try again."
-        print(f"Processing message for session {session_id}: {state}")
+        #print(f"Processing message for session {session_id}: {state}")
 
         module = state.get("module", module)
         graph = agent_router.get_graph(module)
+
+        messages = state.get("messages", [])
+        messages.append({"role": "user", "content": message})
 
         response = await graph.invoke(
             {
@@ -48,11 +51,11 @@ async def process_agent_message(session_id: str, message: str, module: Optional[
                 "next_action": state.get("next_action", ""),
                 "user_id": state.get("user_id"),
                 "company_id": state.get("company_id"),
-                "messages": state.get("messages", []),
+                "messages": messages,
             }
         )
-        print("🧠 Response from graph:")
-        pprint(response, indent=2, width=100)
+        #print("🧠 Response from graph:")
+        #pprint(response, indent=2, width=100)
 
         return response.get("message", "I'm processing your request...")
     except Exception as e:
