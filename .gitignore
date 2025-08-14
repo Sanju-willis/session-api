@@ -40,7 +40,7 @@ ENV/
 .env.development
 .env.test
 .env.production
-
+dev/
 # Database
 *.db
 *.sqlite
@@ -84,3 +84,4 @@ data/
 uploads/
 downloads/
 cache/
+dev/
