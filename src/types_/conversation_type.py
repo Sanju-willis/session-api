@@ -9,4 +9,5 @@ class ConversationState(TypedDict):
     messages: List[dict[str, Any]]
     stage: str
     step: int
+    thread_type: Optional[str]  # e.g., "company", "product", "service"
     context: Optional[dict[str, Any]]

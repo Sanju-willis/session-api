@@ -14,7 +14,6 @@ class LangGraphManager:
 
     @contextmanager
     def get_app(self):
-
         try:
             self._conn, self._checkpointer = open_langraph_sqlite(self.db_path)
             workflow = self._build_workflow()
@@ -25,20 +24,19 @@ class LangGraphManager:
                 close_langraph_sqlite(self._conn)
 
     def _build_workflow(self) -> StateGraph:
-
         workflow = StateGraph(ConversationState)
-
         workflow.add_node("initialize", self._initialize_conversation)
-        
         workflow.set_entry_point("initialize")
         workflow.set_finish_point("initialize")
         return workflow
 
     def _initialize_conversation(self, state: ConversationState):
-
+        # Only initialize if not already set - don't overwrite!
         if not state.get("messages"):
             state["messages"] = []
+
+        # Keep existing context, only set if empty
+        if not state.get("context"):
             state["context"] = {}
+
         return state
-
-

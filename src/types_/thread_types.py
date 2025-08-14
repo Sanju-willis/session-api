@@ -9,16 +9,19 @@ class Module(Enum):
     SOCIAL = "social"
     ANALYTICS = "analytics"
 
+
 class ThreadType(Enum):
     MODULE = "module"
     COMPANY = "company"
     PRODUCT = "product"
     CHANNEL = "channel"
 
+
 class MessageType(str, Enum):
     USER = "user"
     ASSISTANT = "assistant"
     SYSTEM = "system"
+
 
 class HomeStage(Enum):
     ONBOARDED = "onboarded"

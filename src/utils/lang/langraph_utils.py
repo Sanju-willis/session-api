@@ -8,12 +8,13 @@ logger = setup_logging(__name__)
 
 
 def build_initial_state(
-    user_id: str, company_id: str, module: str, stage: str, context: Dict[str, Any] = None
+    user_id: str, company_id: str, module: str, stage: str, thread_type: str, context: Dict[str, Any] = None
 ) -> ConversationState:
     return ConversationState(
         user_id=user_id,
         company_id=company_id,
         module=module,
+        thread_type=thread_type,
         messages=[],
         stage=stage,
         step=1,
@@ -22,6 +23,7 @@ def build_initial_state(
 
 
 def persist_state(thread_id: str, state: ConversationState) -> None:
+    print(f"Persisting state for thread {thread_id}: {state}")
     config = {"configurable": {"thread_id": thread_id}}
     manager = LangGraphManager()
     with manager.get_app() as app:
@@ -70,6 +72,6 @@ def update_partial_state(session_id: str, state: Dict[str, Any]) -> None:
         manager = LangGraphManager()
         with manager.get_app() as app:
             app.update_state(config, clean_state)
-            
+
     except Exception as e:
         logger.warning(f"[BaseGraph] Failed to update state for session {session_id}: {e}")
