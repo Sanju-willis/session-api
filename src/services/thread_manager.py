@@ -2,68 +2,86 @@
 from src.types_.thread_types import Module, ThreadInfo, HomeStage, ThreadType
 from src.utils import generate_thread_id
 
-
 class ThreadManager:
     def __init__(self):
         self.active_threads = {}
 
-    def get_module_thread(self, user_id: str, company_id: str, module: Module) -> ThreadInfo:
+    def get_thread(self, user_id: str, company_id: str, module: str, thread_type: str, item_id: str = None) -> ThreadInfo:
+        """Unified method to get any thread type"""
         
-        thread_id = generate_thread_id(user_id, company_id, module, ThreadType.MODULE)
-
+        # Convert strings to enums
+        module_enum = Module(module)
+        thread_type_enum = ThreadType(thread_type)
+        
+        # Generate thread ID
+        thread_id = generate_thread_id(user_id, company_id, module_enum, thread_type_enum, item_id)
+        
+        # Check if thread already exists
         if thread_id in self.active_threads:
             return self.active_threads[thread_id]
-
-        if module == Module.HOME:
-            initial_stage = HomeStage.ONBOARDED.value
-        else:
-            initial_stage = "initial"
-
-        return ThreadInfo(
+        
+        # Set parent thread for sub-threads
+        parent_thread_id = None
+        if thread_type in ["company", "product", "service"]:
+            parent_thread_id = generate_thread_id(user_id, company_id, Module.HOME, ThreadType.MODULE)
+        
+        # Determine initial stage
+        initial_stage = self._get_initial_stage(module_enum, thread_type_enum)
+        
+        # Build metadata
+        metadata = self._build_metadata(user_id, company_id, module, item_id, thread_type)
+        
+        # Create thread info
+        thread_info = ThreadInfo(
             thread_id=thread_id,
-            thread_type=ThreadType.MODULE,
-            module=module,
-            parent_thread_id=None,
-            item_id=None,
+            thread_type=thread_type_enum,
+            module=module_enum,
+            parent_thread_id=parent_thread_id,
+            item_id=item_id,
             stage=initial_stage,
-            metadata={
-                "user_id": user_id,
-                "company_id": company_id,
-                "module": module.value,
-            },
+            metadata=metadata,
         )
+        
+        # Cache the thread
+        self.active_threads[thread_id] = thread_info
+        
+        return thread_info
+
+    def _get_initial_stage(self, module: Module, thread_type: ThreadType) -> str:
+        """Determine initial stage based on module and thread type"""
+        if thread_type == ThreadType.MODULE and module == Module.HOME:
+            return HomeStage.ONBOARDED.value
+        else:
+            return "initial"
+
+    def _build_metadata(self, user_id: str, company_id: str, module: str, item_id: str = None, thread_type: str = "module") -> dict:
+        """Build metadata dictionary based on thread type"""
+        metadata = {
+            "user_id": user_id,
+            "company_id": company_id,
+            "module": module,
+            "thread_type": thread_type,
+        }
+        
+        if item_id:
+            if thread_type == "product":
+                metadata["product_id"] = item_id
+            elif thread_type == "service":
+                metadata["service_id"] = item_id
+            else:
+                metadata["item_id"] = item_id
+        
+        return metadata
+
+    # Legacy methods for backward compatibility
+    def get_module_thread(self, user_id: str, company_id: str, module: Module) -> ThreadInfo:
+        """Legacy method - use get_thread instead"""
+        return self.get_thread(user_id, company_id, module.value, "module")
 
     def get_company_thread(self, user_id: str, company_id: str) -> ThreadInfo:
-        
-        home_thread_id = generate_thread_id(user_id, company_id, Module.HOME, ThreadType.MODULE)
-
-        thread_id = generate_thread_id(user_id, company_id, Module.HOME, ThreadType.COMPANY)
-
-        return ThreadInfo(
-            thread_id=thread_id,
-            thread_type=ThreadType.COMPANY,
-            module=Module.HOME,
-            parent_thread_id=home_thread_id,
-            item_id=None,
-            stage="initial",
-            metadata={"user_id": user_id, "company_id": company_id},
-        )
+        """Legacy method - use get_thread instead"""
+        return self.get_thread(user_id, company_id, "home", "company")
 
     def get_product_thread(self, user_id: str, company_id: str, product_id: str) -> ThreadInfo:
-        home_thread_id = generate_thread_id(user_id, company_id, Module.HOME, ThreadType.MODULE)
-
-        thread_id = generate_thread_id(user_id, company_id, Module.HOME, ThreadType.PRODUCT, product_id)
-
-        return ThreadInfo(
-            thread_id=thread_id,
-            thread_type=ThreadType.PRODUCT,
-            module=Module.HOME,
-            parent_thread_id=home_thread_id,
-            item_id=product_id,
-            stage="initial",
-            metadata={
-                "user_id": user_id,
-                "company_id": company_id,
-                "product_id": product_id,
-            },
-        )
+        """Legacy method - use get_thread instead"""
+        return self.get_thread(user_id, company_id, "home", "product", product_id)
