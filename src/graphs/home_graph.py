@@ -30,7 +30,7 @@ class HomeGraph:
             {
                 "onboarded": "onboarding",
                 "need_company": "company_agent",
-                "company_profile_completed": "product_agent",
+                "company_completed": "product_agent",
                 "setup_complete": "general",
             },
         )

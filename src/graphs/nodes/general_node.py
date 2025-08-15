@@ -8,33 +8,35 @@ async def general_node(state: Dict[str, Any]) -> Dict[str, Any]:
     agent = get_general_agent()
     messages = state.get("messages", [])
     
-    # Add system context to guide the agent
-    system_msg = """You are a helpful assistant for the Kordor platform. 
+    # Get the latest user message or provide default
+    if messages:
+        user_input = messages[-1]["content"] if messages[-1]["role"] == "user" else "I need help with general questions"
+    else:
+        user_input = "How can I help you with your Kordor platform today?"
     
-Your job is to:
-1. Help users with general questions about their business
-2. Provide guidance on using Kordor features
-3. Answer questions about their company profile and products
-4. Be conversational and helpful
-5. Direct users to specific modules when needed
-
-The user has completed their initial setup. Be friendly and assist with any questions."""
+    try:
+        response = await agent.ainvoke({
+            "input": user_input,
+            "chat_history": [
+                (msg["role"], msg["content"]) 
+                for msg in messages[:-1] if messages
+            ]
+        })
+        
+        final_message = response["output"]
+        
+        # Log tool usage
+        steps_used = len(response.get("intermediate_steps", []))
+        print(f"General agent used {steps_used} steps")
+        
+    except Exception as e:
+        print(f"Error in general agent: {e}")
+        final_message = "Hello! I'm here to help you with any questions about your business or the Kordor platform. What can I assist you with today?"
     
-    conversation = [("system", system_msg)]
-    conversation.extend([(msg["role"], msg["content"]) for msg in messages])
-    
-    # If no user message yet, provide default response
-    if not any(msg["role"] == "user" for msg in messages):
-        conversation.append(("user", "I need help with general questions"))
-    
-    response = await agent.ainvoke({"messages": conversation})
-    final_message = response["messages"][-1].content
-
-    # Update state with message and append to conversation
     return append_message(
         state, 
         "assistant", 
-        final_message,
-        node="general_agent",
+        final_message, 
+        node="general_agent", 
         message_type="assistant"
     )

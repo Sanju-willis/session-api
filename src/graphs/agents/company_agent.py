@@ -1,4 +1,4 @@
-# src/graphs/agents/company_agent.py
+# src\graphs\agents\company_agent.py
 from langchain.agents import create_openai_functions_agent, AgentExecutor
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI

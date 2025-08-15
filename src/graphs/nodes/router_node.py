@@ -15,7 +15,7 @@ def router_node(state: Dict[str, Any]) -> Dict[str, Any]:
     next_action_map = {
         "onboarded": "start_onboarding",
         "need_company": "complete_company_profile",
-        "company_profile_completed": "add_products_services",
+        "company_completed": "add_products_services",
         "products_added": "integrate_channels",
         "channels_integrated": "explore_other_modules",
         "setup_complete": "general_assistance",

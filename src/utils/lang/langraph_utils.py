@@ -15,6 +15,8 @@ def build_initial_state(
         stage = "onboarded"
     elif thread_type == "company":
         stage = "need_company"
+    elif thread_type == "product":
+        stage = "company_completed"
     else:
         stage = "onboarded"
 
