@@ -2,8 +2,8 @@
 from contextlib import contextmanager
 from langgraph.graph import StateGraph
 from src.types_ import ConversationState
-from src.core.langraph_checkpoint import open_langraph_sqlite, close_langraph_sqlite
-from src.config.settings import settings
+from .langraph_checkpoint import open_langraph_sqlite, close_langraph_sqlite
+from src.config import settings
 
 
 class LangGraphManager:

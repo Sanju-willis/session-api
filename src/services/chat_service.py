@@ -1,4 +1,4 @@
-# src\services\agent_responder.py
+# src\services\chat_service.py
 from typing import Optional
 from src.graphs import HomeGraph, SocialGraph, AnalyticsGraph
 from src.types_ import Module

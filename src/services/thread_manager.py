@@ -1,5 +1,5 @@
 # src\services\thread_manager.py
-from src.types_.thread_types import Module, ThreadInfo, HomeStage, ThreadType
+from src.types_ import Module, ThreadInfo, HomeStage, ThreadType
 from src.utils import generate_thread_id
 
 

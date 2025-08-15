@@ -24,6 +24,7 @@ class MessageType(str, Enum):
 
 
 class HomeStage(Enum):
+    ONBOARDING = "onboarding"
     ONBOARDED = "onboarded"
     COMPANY_PROFILE_COMPLETED = "company_profile_completed"
     PRODUCTS_ADDED = "products_added"
@@ -40,3 +41,4 @@ class ThreadInfo:
     item_id: Optional[str]  # For products: product_id, for channels: channel_id
     stage: str
     metadata: Dict[str, Any]
+    entity_id: Optional[str] = None  # For company or product threads, this can be the company_id or product_id

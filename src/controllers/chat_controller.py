@@ -1,4 +1,4 @@
-# src\controllers\sessions_controller.py
+# src\controllers\chat_controller.py
 from sqlalchemy.orm import Session as OrmSession
 from src.schemas import SendMessageIn, MessageOut
 from src.services import process_agent_message

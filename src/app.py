@@ -6,7 +6,7 @@ from fastapi.exceptions import RequestValidationError
 from sqlalchemy.exc import IntegrityError
 from .errors import global_exception_handler
 from .core.db import Base, engine
-from src.routers import sessions_router, agent_router
+from src.routers import session_route, chat_route
 
 
 @asynccontextmanager
@@ -34,8 +34,8 @@ def create_app() -> FastAPI:
     )
 
     # Routers
-    app.include_router(sessions_router)
-    app.include_router(agent_router)
+    app.include_router(session_route)
+    app.include_router(chat_route)
 
     # Health
     @app.get("/")

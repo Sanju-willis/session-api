@@ -1,6 +1,6 @@
 # src\routers\__init__.py
-from .sessions_router import router as sessions_router
-from .agent_router import router as agent_router
+from .chat_route import router as chat_route
+from .session_route import router as session_route
 
 # Export all routers
-__all__ = ["sessions_router", "agent_router"]
+__all__ = ["chat_route", "session_route"]
