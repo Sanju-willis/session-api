@@ -1,5 +1,5 @@
 # src\types_\thread_types.py
-from typing import Dict, Any, Optional
+from typing import Optional
 from enum import Enum
 from dataclasses import dataclass
 
@@ -35,10 +35,7 @@ class HomeStage(Enum):
 @dataclass
 class ThreadInfo:
     thread_id: str
-    thread_type: ThreadType
-    module: Module
+    
     parent_thread_id: Optional[str]
-    item_id: Optional[str]  # For products: product_id, for channels: channel_id
-    stage: str
-    metadata: Dict[str, Any]
-    entity_id: Optional[str] = None  # For company or product threads, this can be the company_id or product_id
+    
+    

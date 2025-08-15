@@ -16,7 +16,7 @@ class LangGraphService:
     ) -> Dict[str, Any]:
         # print(f"Creating session for  entity_id: {entity_id}")
         thread_info = self.thread_manager.get_thread(user_id, company_id, module, thread_type, item_id, entity_id)
-        pprint(f"Thread info: {thread_info}")
+        #pprint(f"Thread info: {thread_info}")
         # print(f"Thread info: {thread_info}")
 
         context = build_context(thread_type, item_id, entity_id)
@@ -26,18 +26,20 @@ class LangGraphService:
             user_id,
             company_id,
             module,
-            thread_info.stage,
             thread_type,  # Add this parameter
             context,
         )
 
         persist_state(thread_info.thread_id, initial_state)
+        pprint(f"Thread info: {initial_state}")
+        stage = initial_state.get('stage') if isinstance(initial_state, dict) else initial_state.stage
+
 
         return {
             "session_id": thread_info.thread_id,
             "thread_type": thread_type,
             "module": module,
-            "stage": thread_info.stage,
+            "stage": stage,
             "parent_thread": thread_info.parent_thread_id,
             **({"item_id": item_id} if item_id else {}),
         }

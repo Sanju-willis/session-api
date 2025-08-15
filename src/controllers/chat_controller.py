@@ -10,7 +10,7 @@ async def send_message_ctrl(payload: SendMessageIn, db: OrmSession) -> MessageOu
         message=payload.message, 
         module=payload.message_type
     )
-    print(f"Response data: {response_data}")
+    #print(f"Response data: {response_data}")
     
     return MessageOut(
         message=response_data["message"],

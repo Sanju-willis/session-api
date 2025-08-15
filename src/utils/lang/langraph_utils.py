@@ -1,29 +1,35 @@
 # src\utils\lang\langraph_utils.py
-from src.types_.conversation_type import ConversationState
+from src.types_ import ConversationState, HomeStage
 from typing import Dict, Any, Optional
-from src.core.langraph_config import LangGraphManager
-from src.utils.logging import setup_logging
+from src.core import LangGraphManager
+from src.utils import setup_logging
 
 logger = setup_logging(__name__)
 
 
 def build_initial_state(
-    user_id: str, company_id: str, module: str, stage: str, thread_type: str, context: Dict[str, Any] = None
+    user_id: str, company_id: str, module: str, thread_type: str, context: Dict[str, Any] = None
 ) -> ConversationState:
+    # Determine stage based on business logic
+    if thread_type == "module" and module == "home":
+        stage = "onboarded"
+    else:
+        stage = "initial"
+
     return ConversationState(
         user_id=user_id,
         company_id=company_id,
         module=module,
         thread_type=thread_type,
         messages=[],
-        stage=stage,
+        stage=stage,  # ✅ Determined internally
         step=1,
         context=context or {},
     )
 
 
 def persist_state(thread_id: str, state: ConversationState) -> None:
-    print(f"Persisting state for thread {thread_id}: {state}")
+    #print(f"Persisting state for thread {thread_id}: {state}")
     config = {"configurable": {"thread_id": thread_id}}
     manager = LangGraphManager()
     with manager.get_app() as app:

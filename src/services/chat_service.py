@@ -3,7 +3,7 @@ from typing import Optional
 from src.graphs import HomeGraph, SocialGraph, AnalyticsGraph
 from src.types_ import Module
 from src.utils import setup_logging, get_session_state
-#from pprint import pprint
+from pprint import pprint
 
 logger = setup_logging(__name__)
 
@@ -35,6 +35,7 @@ async def process_agent_message(session_id: str, message: str, module: Optional[
         if not state:
             return "I couldn't find your session. Please try again."
         #print(f"Processing message for session {session_id}: {state}")
+        pprint(state)
 
         module = state.get("module", module)
         graph = agent_router.get_graph(module)
