@@ -3,11 +3,12 @@ from typing import Dict, Any
 from ..agents import get_company_agent
 from src.utils import append_message
 
+
 async def company_node(state: Dict[str, Any]) -> Dict[str, Any]:
     """Handle company profile onboarding"""
     agent = get_company_agent()
     messages = state.get("messages", [])
-    
+
     # Add system context to guide the agent
     system_msg = """You are a company onboarding specialist. Your job is to help collect company information.
     
@@ -18,19 +19,16 @@ Use your available tools (fill_company_profile, collect_company_info) to:
 4. Be helpful and conversational
 
 Always use tools when helping with company setup."""
-    
+
     conversation = [("system", system_msg)]
     conversation.extend([(msg["role"], msg["content"]) for msg in messages])
-    
+
     # If no user message yet, prompt for company setup
     if not any(msg["role"] == "user" for msg in messages):
         conversation.append(("user", "Help me set up my company profile"))
-    
+
     response = await agent.ainvoke({"messages": conversation})
     final_message = response["messages"][-1].content
 
     # Update state with message and append to conversation
-    clean_state = append_message(state, "assistant", final_message)
-    clean_state["message"] = final_message
-    clean_state["message_type"] = "assistant"
-    return clean_state
+    return append_message(state, "assistant", final_message, node="company_agent", message_type="assistant")

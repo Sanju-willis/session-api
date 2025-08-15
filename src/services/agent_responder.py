@@ -41,6 +41,8 @@ async def process_agent_message(session_id: str, message: str, module: Optional[
 
         messages = state.get("messages", [])
         messages.append({"role": "user", "content": message})
+        #print(f"Messages for session {state}: {messages}")
+        #print (f"Processing {state.get("stage", "initial")}")
 
         response = await graph.invoke(
             {
@@ -57,7 +59,7 @@ async def process_agent_message(session_id: str, message: str, module: Optional[
         #print("🧠 Response from graph:")
         #pprint(response, indent=2, width=100)
 
-        return response.get("message", "I'm processing your request...")
+        return response
     except Exception as e:
         logger.error(f"Error processing message for session {session_id}: {e}")
         return "I'm sorry, I encountered an error. Please try again."

@@ -1,7 +1,7 @@
 # src\graphs\home_graph.py
 from langgraph.graph import StateGraph, END
 from typing import Dict, Any
-from .nodes import company_node, product_node, router_node
+from .nodes import company_node, product_node, router_node, onboarding_node
 from src.utils import update_partial_state
 
 class HomeGraph:
@@ -14,8 +14,10 @@ class HomeGraph:
 
         # Nodes - imported from separate files
         wf.add_node("router", router_node)
+        wf.add_node("onboarding", onboarding_node)
         wf.add_node("company_agent", company_node)
         wf.add_node("product_agent", product_node)
+        
 
         # Entry
         wf.set_entry_point("router")
@@ -24,7 +26,7 @@ class HomeGraph:
         wf.add_conditional_edges(
             "router",
             lambda state: state.get("stage"),
-            {"onboarded": "company_agent", "company_profile_completed": "product_agent"},
+            { "onboarded": "onboarding","need_company": "company_agent", "company_profile_completed": "product_agent"},
         )
 
         # Endpoints

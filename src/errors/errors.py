@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from starlette import status
 import traceback
 from src.utils.logging import setup_logging
-from ..core.config import settings
+from src.config import settings
 from .custom_exceptions import MissingEnvVarError
 
 logger = setup_logging(__name__)

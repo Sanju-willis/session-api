@@ -2,7 +2,7 @@
 from langchain.tools import tool
 from langgraph.prebuilt import create_react_agent
 from langchain_openai import ChatOpenAI
-from src.config.settings import settings
+from src.config import settings
 
 @tool
 def fill_company_profile() -> str:

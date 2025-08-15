@@ -2,7 +2,7 @@ from uuid import uuid4
 import hashlib
 
 from src.core.db import SessionLocal
-from src.models.conversation import Conversation
+from src.models import Conversation
 from src.types_.thread_types import Module, ThreadType
 
 def generate_thread_id(user_id, company_id, module, thread_type):

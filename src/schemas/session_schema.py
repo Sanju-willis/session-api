@@ -29,3 +29,5 @@ class MessageOut(BaseModel):
     message_type: str
     timestamp: str
     session_id: str
+    stage: Optional[str] = "response"
+    node: Optional[str] = "unknown"

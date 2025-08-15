@@ -1,4 +1,4 @@
-# src\models\agent_session.py
+# src\models\session.py
 import uuid
 from datetime import datetime
 from sqlalchemy import Text, DateTime, Index, func

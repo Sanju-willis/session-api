@@ -1,12 +1,16 @@
 # src\main.py
-import os
-from .app import create_app
-
-# Set debug mode
-os.environ["DEBUG"] = "true"
+from src.app import create_app
+from src.config import settings
 
 app = create_app()
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("src.main:app", host="0.0.0.0", port=8000, reload=True)
+    
+    uvicorn.run(
+        "src.main:app",
+        host=settings.HOST,
+        port=settings.PORT,
+        reload=settings.DEBUG,
+        log_level=settings.LOG_LEVEL.lower()
+    )
