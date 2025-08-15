@@ -10,6 +10,7 @@ def generate_thread_id(
     module: Module,
     thread_type: ThreadType = ThreadType.MODULE,
     item_id: Optional[str] = None,
+    entity_id: Optional[str] = None,
 ) -> str:
     key_parts = [user_id, company_id, module.value]
 
@@ -18,6 +19,9 @@ def generate_thread_id(
 
     if item_id:
         key_parts.append(item_id)
+
+    if entity_id:
+        key_parts.append(entity_id)
 
     key = ":".join(key_parts)
     return hashlib.md5(key.encode()).hexdigest()

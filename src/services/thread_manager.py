@@ -8,16 +8,16 @@ class ThreadManager:
         self.active_threads = {}
 
     def get_thread(
-        self, user_id: str, company_id: str, module: str, thread_type: str, item_id: str = None
+        self, user_id: str, company_id: str, module: str, thread_type: str,entity_id: str, item_id: str = None
     ) -> ThreadInfo:
-        """Unified method to get any thread type"""
 
         # Convert strings to enums
         module_enum = Module(module)
         thread_type_enum = ThreadType(thread_type)
 
         # Generate thread ID
-        thread_id = generate_thread_id(user_id, company_id, module_enum, thread_type_enum, item_id)
+        #print(f"Generating thread ID for user: item: {entity_id}", {thread_type_enum})
+        thread_id = generate_thread_id(user_id, company_id, module_enum, thread_type_enum, item_id, entity_id)
 
         # Check if thread already exists
         if thread_id in self.active_threads:

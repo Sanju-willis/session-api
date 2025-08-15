@@ -7,8 +7,9 @@ class StartSessionRequest(BaseModel):
     module: str
     thread_type: str
     item_id: Optional[str] = None
-    productId: Optional[str] = None  # Default to module, can be overridden
+    entity_id: Optional[str] = None  # Optional entity ID for additional context
 
+    
 
 class SessionResponse(BaseModel):
     session_id: str

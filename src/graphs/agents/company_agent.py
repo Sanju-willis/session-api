@@ -1,18 +1,17 @@
 # src\graphs\agents\company_agent.py
-from langchain.tools import tool
 from langgraph.prebuilt import create_react_agent
 from langchain_openai import ChatOpenAI
 from src.config import settings
+from .tools.company_tools import (
+    save_company_basic_info,
+    save_company_contact_info,
+    save_company_branding,
+    save_social_links,
+    get_company_progress,
+    fill_company_profile,
+    collect_company_info,
+)
 
-@tool
-def fill_company_profile() -> str:
-    """Start onboarding by collecting company details."""
-    return "Please share your company name, size, and industry."
-
-@tool
-def collect_company_info() -> str:
-    """Collect specific company information step by step."""
-    return "Let me help you complete your company profile. What's your company name?"
 
 def get_company_agent():
     llm = ChatOpenAI(
@@ -20,6 +19,15 @@ def get_company_agent():
         model="gpt-4",
         temperature=0,
     )
-    
-    # ✅ Remove state_modifier - not supported by create_react_agent
-    return create_react_agent(llm, [fill_company_profile, collect_company_info])
+
+    tools = [
+        fill_company_profile,
+        collect_company_info,
+        save_company_basic_info,
+        save_company_contact_info,
+        save_company_branding,
+        save_social_links,
+        get_company_progress,
+    ]
+
+    return create_react_agent(llm, tools)
