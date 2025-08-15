@@ -3,7 +3,13 @@ from typing import Dict, Any
 
 
 def router_node(state: Dict[str, Any]) -> Dict[str, Any]:
-    """Route based on current stage"""
+     # Handle user message first
+    messages = state.get("messages", [])
+    user_message = state.get("user_message")
+    
+    if user_message:
+        messages.append({"role": "user", "content": user_message})
+  
     stage = state.get("stage")
 
     next_action_map = {

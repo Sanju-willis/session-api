@@ -1,4 +1,4 @@
-# src\graphs\agents\company_agent.py
+# src/graphs/agents/company_agent.py - REMOVE system prompt from here
 from langgraph.prebuilt import create_react_agent
 from langchain_openai import ChatOpenAI
 from src.config import settings
@@ -11,7 +11,6 @@ from .tools.company_tools import (
     fill_company_profile,
     collect_company_info,
 )
-
 
 def get_company_agent():
     llm = ChatOpenAI(

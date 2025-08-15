@@ -1,5 +1,5 @@
 # src\utils\lang\langraph_utils.py
-from src.types_ import ConversationState, HomeStage
+from src.types_ import ConversationState
 from typing import Dict, Any, Optional
 from src.core import LangGraphManager
 from src.utils import setup_logging
@@ -13,8 +13,10 @@ def build_initial_state(
     # Determine stage based on business logic
     if thread_type == "module" and module == "home":
         stage = "onboarded"
+    elif thread_type == "company":
+        stage = "need_company"
     else:
-        stage = "initial"
+        stage = "onboarded"
 
     return ConversationState(
         user_id=user_id,

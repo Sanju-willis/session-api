@@ -21,15 +21,14 @@ class LangGraphService:
         item_id: str = None,
         parent_thread_id: Optional[str] = None,
     ) -> Dict[str, Any]:
-        #pprint(f"Thread info: {parent_thread_id}")
+        # pprint(f"Thread info: {parent_thread_id}")
 
         thread_info = self.thread_manager.get_thread(
             user_id, company_id, module, thread_type, entity_id, item_id, parent_thread_id
         )
         pprint(f"Thread info: {thread_type}, {module}")
 
-
-        context = build_context(thread_type.value, item_id, entity_id)
+        context = build_context(thread_type.value, entity_id)
 
         # Pass thread_type directly, not inside context
         initial_state = build_initial_state(
@@ -50,5 +49,6 @@ class LangGraphService:
             "module": module,
             "stage": stage,
             "parent_thread": thread_info.parent_thread_id,
-            **({"item_id": item_id} if item_id else {}),
+            "entity_id": entity_id, 
+            
         }

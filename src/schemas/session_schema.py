@@ -17,7 +17,8 @@ class SessionResponse(BaseModel):
     module: Optional[str] = None
     thread_type: str
     stage: str
-    parent_thread: Optional[str] = None  # Optional parent thread ID
+    parent_thread: Optional[str] = None  
+    entity_id: Optional[str] = None
 
 
 class SendMessageIn(BaseModel):
