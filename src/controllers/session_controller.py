@@ -14,8 +14,9 @@ async def session_ctrl(request: StartSessionRequest, user_ctx: ReqContext, db: S
             company_id=user_ctx.company_id,
             module=request.module,
             thread_type=request.thread_type,
-            item_id=request.item_id or item_id,  # Use from request body or URL param
-            entity_id=request.entity_id  # Pass entity_id from request body
+            item_id=request.item_id or item_id,
+            entity_id=request.entity_id,
+            parent_thread_id=request.parent_thread_id,
         )
         
         return SessionResponse(**result)

@@ -1,13 +1,14 @@
 # src\schemas\session_schema.py
 from pydantic import BaseModel
 from typing import Optional
-
+from src.types_ import Module, ThreadType
 
 class StartSessionRequest(BaseModel):
-    module: str
-    thread_type: str
+    module: Module
+    thread_type: ThreadType
     item_id: Optional[str] = None
-    entity_id: Optional[str] = None  # Optional entity ID for additional context
+    entity_id: Optional[str] = None
+    parent_thread_id: Optional[str] = None 
 
     
 
