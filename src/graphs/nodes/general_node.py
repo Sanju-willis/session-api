@@ -2,10 +2,11 @@
 from typing import Dict, Any
 from langchain_core.messages import AIMessage
 from ..agents import get_general_agent
-from ..state import CustomState
+from src.types_ import CustomState
+
 
 async def general_node(state: CustomState) -> Dict[str, Any]:
-    
+    print(state)
     agent = get_general_agent()
     
     # Handle both dict and object (defensive coding)

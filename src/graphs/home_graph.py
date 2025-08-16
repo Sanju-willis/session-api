@@ -3,7 +3,7 @@ from langgraph.graph import StateGraph, END
 from typing import Dict, Any
 from .nodes import company_node, product_node, onboarding_node, general_node
 from src.utils import log_state
-from .state import CustomState
+from src.types_ import CustomState
 
 
 class HomeGraph:

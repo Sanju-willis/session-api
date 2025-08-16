@@ -27,7 +27,6 @@ agent_router = AgentRouter()
 
 
 async def process_agent_message(session_id: str, message: str) -> Dict[str, Any]:
-   
     try:
         # Get session state
         state = get_session_state(session_id)

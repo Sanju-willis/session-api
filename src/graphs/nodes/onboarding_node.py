@@ -2,7 +2,7 @@
 from typing import Dict, Any
 from langchain_core.messages import AIMessage, HumanMessage
 from ..agents import get_onboarding_agent
-from ..state import CustomState
+from src.types_ import CustomState
 
 async def onboarding_node(state: CustomState) -> Dict[str, Any]:
    

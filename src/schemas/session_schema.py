@@ -6,7 +6,6 @@ from src.types_ import Module, ThreadType
 class StartSessionRequest(BaseModel):
     module: Module
     thread_type: ThreadType
-    item_id: Optional[str] = None
     entity_id: Optional[str] = None
     parent_thread_id: Optional[str] = None 
 

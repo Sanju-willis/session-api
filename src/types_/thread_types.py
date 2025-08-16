@@ -35,7 +35,6 @@ class HomeStage(Enum):
 @dataclass
 class ThreadInfo:
     thread_id: str
-    
     parent_thread_id: Optional[str]
     
     

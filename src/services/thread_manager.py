@@ -15,10 +15,10 @@ class ThreadManager:
 
     def get_thread(
         self, user_id: str, company_id: str, module: Module, thread_type: ThreadType, 
-        entity_id: str, item_id: str = None, parent_thread_id: Optional[str] = None
+        entity_id: str,  parent_thread_id: Optional[str] = None
     ) -> ThreadInfo:
         
-        thread_id = generate_thread_id(user_id, company_id, module, thread_type, item_id, entity_id)
+        thread_id = generate_thread_id(user_id, company_id, module, thread_type, entity_id)
         
         
         # Check if thread already exists

@@ -5,7 +5,7 @@ from src.utils import ReqContext
 from src.services import LangGraphService
 from src.schemas import StartSessionRequest, SessionResponse
 
-async def session_ctrl(request: StartSessionRequest, user_ctx: ReqContext, db: Session,  item_id: str = None) -> SessionResponse:
+async def session_ctrl(request: StartSessionRequest, user_ctx: ReqContext, db: Session,  ) -> SessionResponse:
     
     try:
         service = LangGraphService()
@@ -14,7 +14,6 @@ async def session_ctrl(request: StartSessionRequest, user_ctx: ReqContext, db: S
             company_id=user_ctx.company_id,
             module=request.module,
             thread_type=request.thread_type,
-            item_id=request.item_id or item_id,
             entity_id=request.entity_id,
             parent_thread_id=request.parent_thread_id,
         )

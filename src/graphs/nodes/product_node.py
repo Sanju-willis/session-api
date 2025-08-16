@@ -2,7 +2,7 @@
 from typing import Dict, Any
 from langchain_core.messages import AIMessage
 from ..agents import get_product_agent
-from ..state import CustomState
+from src.types_ import CustomState
 
 async def product_node(state: CustomState) -> Dict[str, Any]:
     

@@ -4,7 +4,6 @@ from .logging import setup_logging
 from .lang.langraph_utils import build_initial_state, persist_state, get_session_state, update_partial_state
 from .lang.context_builder import build_context
 from .lang.thread_utils import generate_thread_id
-from .lang.message_utils import append_message
 from .logger import log_state, log_debug, log_error
 
 __all__ = [
@@ -19,4 +18,4 @@ __all__ = [
     "generate_thread_id",
     "build_context",
 ]
-__all__ += ["get_session_state", "update_partial_state", "append_message"]
+__all__ += ["get_session_state", "update_partial_state"]

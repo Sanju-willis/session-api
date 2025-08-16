@@ -1,5 +1,5 @@
 # src\types_\__init__.py
-from .conversation_type import ConversationState
+from .conversation_type import ConversationState, CustomState
 from .thread_types import Module, ThreadType, MessageType, HomeStage, ThreadInfo
 
 __all__ = [
@@ -8,5 +8,6 @@ __all__ = [
     "ThreadType", 
     "MessageType", 
     "HomeStage", 
-    "ThreadInfo"
+    "ThreadInfo",
+    "CustomState"
 ]
