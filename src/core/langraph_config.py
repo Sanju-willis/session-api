@@ -1,7 +1,7 @@
 # src\core\langraph_config.py
 from contextlib import contextmanager
 from langgraph.graph import StateGraph
-from src.types_ import ConversationState
+from src.types_ import CustomState
 from .langraph_checkpoint import open_langraph_sqlite, close_langraph_sqlite
 from src.config import settings
 
@@ -24,13 +24,13 @@ class LangGraphManager:
                 close_langraph_sqlite(self._conn)
 
     def _build_workflow(self) -> StateGraph:
-        workflow = StateGraph(ConversationState)
+        workflow = StateGraph(CustomState)
         workflow.add_node("initialize", self._initialize_conversation)
         workflow.set_entry_point("initialize")
         workflow.set_finish_point("initialize")
         return workflow
 
-    def _initialize_conversation(self, state: ConversationState):
+    def _initialize_conversation(self, state: CustomState):
         # Only initialize if not already set - don't overwrite!
         if not state.get("messages"):
             state["messages"] = []

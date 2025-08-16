@@ -3,7 +3,7 @@ from .thread_manager import ThreadManager
 from src.core import LangGraphManager
 from typing import Dict, Any, Optional
 from src.utils import build_initial_state, persist_state, build_context
-
+#from pprint import pprint  
 
 class LangGraphService:
     def __init__(self):
@@ -37,7 +37,8 @@ class LangGraphService:
         )
 
         persist_state(thread_info.thread_id, initial_state)
-        # pprint(f"Thread info: {initial_state}")
+        #pprint(f"Thread info: {persist_state}")
+
         stage = initial_state.get("stage") if isinstance(initial_state, dict) else initial_state.stage
 
         return {

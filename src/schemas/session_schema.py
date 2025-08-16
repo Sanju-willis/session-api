@@ -23,7 +23,6 @@ class SessionResponse(BaseModel):
 class SendMessageIn(BaseModel):
     session_id: str
     message: str
-    message_type: str = "user"
 
 
 class MessageOut(BaseModel):

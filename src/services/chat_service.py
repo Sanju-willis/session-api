@@ -34,7 +34,6 @@ async def process_agent_message(session_id: str, message: str) -> Dict[str, Any]
             log_error(f"No session found for ID: {session_id}")
             return _error_response("Session not found")
 
-        # Get graph and prepare messages
         graph = agent_router.get_graph(state.get("module"))
         messages = state.get("messages", [])
         messages.append(HumanMessage(content=message))
