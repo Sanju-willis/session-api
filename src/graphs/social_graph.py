@@ -1,8 +1,7 @@
 # src\graphs\social_graph.py
 from typing import Dict, Any
-from langgraph.graph import StateGraph, END
-from src.utils import update_partial_state, append_message
-
+from langgraph.graph import StateGraph, MessagesState, END
+from langchain_core.messages import AIMessage
 
 class SocialGraph:
     def __init__(self):
@@ -10,7 +9,7 @@ class SocialGraph:
         self.graph = self._build_graph()
 
     def _build_graph(self):
-        wf = StateGraph(dict)
+        wf = StateGraph(MessagesState)  # Changed to MessagesState
         wf.add_node("router", self._create_router_node)
         wf.add_node("process_initial", self._process_initial)
         wf.add_node("process_user_message", self._process_user_message)
@@ -45,32 +44,39 @@ class SocialGraph:
         return {**state, "route": route}
 
     async def _process_initial(self, state: Dict[str, Any]) -> Dict[str, Any]:
+        messages = state.get("messages", [])
         msg = "Hi! I'm your social media assistant. Ready to help with posts, scheduling, and analytics!"
-        clean_state = append_message(state, "assistant", msg)
-        clean_state["message"] = msg
-        clean_state["message_type"] = "assistant"
-        return clean_state
+        
+        messages.append(AIMessage(content=msg, name="social_assistant"))
+        
+        return {
+            "messages": messages,
+            "message_type": "assistant"
+        }
 
     async def _process_user_message(self, state: Dict[str, Any]) -> Dict[str, Any]:
+        messages = state.get("messages", [])
         msg = "Social: I can help you with that! What specifically do you need?"
-        clean_state = append_message(state, "assistant", msg)
-        clean_state["message"] = msg
-        clean_state["message_type"] = "assistant"
-        return clean_state
+        
+        messages.append(AIMessage(content=msg, name="social_assistant"))
+        
+        return {
+            "messages": messages,
+            "message_type": "assistant"
+        }
 
     async def _health_check(self, state: Dict[str, Any]) -> Dict[str, Any]:
+        messages = state.get("messages", [])
         msg = "Social module healthy"
-        clean_state = append_message(state, "assistant", msg)
-        clean_state["message"] = msg
-        clean_state["message_type"] = "assistant"
-        clean_state["status"] = "ok"
-        return clean_state
+        
+        messages.append(AIMessage(content=msg, name="social_assistant"))
+        
+        return {
+            "messages": messages,
+            "message_type": "assistant",
+            "status": "ok"
+        }
 
     async def invoke(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         result = await self.graph.ainvoke(input_data)
-
-        session_id = input_data.get("session_id")
-        if session_id and result:
-            update_partial_state(session_id, result)
-
-        return result
+        return result  # Removed update_partial_state - handled in chat_service.py

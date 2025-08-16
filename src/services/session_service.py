@@ -3,7 +3,6 @@ from .thread_manager import ThreadManager
 from src.core import LangGraphManager
 from typing import Dict, Any, Optional
 from src.utils import build_initial_state, persist_state, build_context
-from pprint import pprint
 
 
 class LangGraphService:
@@ -26,7 +25,6 @@ class LangGraphService:
         thread_info = self.thread_manager.get_thread(
             user_id, company_id, module, thread_type, entity_id, item_id, parent_thread_id
         )
-        pprint(f"Thread info: {thread_type}, {module}")
 
         context = build_context(thread_type.value, entity_id)
 

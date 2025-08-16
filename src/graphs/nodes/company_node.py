@@ -1,10 +1,9 @@
-# src/graphs/nodes/company_node.py
+# src\graphs\nodes\company_node.py
 from typing import Dict, Any
 from ..agents import get_company_agent
 from src.utils import append_message
 
 async def company_node(state: Dict[str, Any]) -> Dict[str, Any]:
-   """Handle company profile onboarding with multi-step guidance"""
    agent = get_company_agent()
    messages = state.get("messages", [])
    

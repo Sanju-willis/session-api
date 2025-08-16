@@ -1,8 +1,7 @@
 # src\graphs\analytics_graph.py
 from typing import Dict, Any
-from langgraph.graph import StateGraph, END
-from src.utils import update_partial_state, append_message
-
+from langgraph.graph import StateGraph, MessagesState, END
+from langchain_core.messages import AIMessage
 
 class AnalyticsGraph:
     def __init__(self):
@@ -10,7 +9,7 @@ class AnalyticsGraph:
         self.graph = self._build_graph()
 
     def _build_graph(self):
-        wf = StateGraph(dict)
+        wf = StateGraph(MessagesState)  # Changed to MessagesState
         wf.add_node("router", self._create_router_node)
         wf.add_node("process_initial", self._process_initial)
         wf.add_node("process_user_message", self._process_user_message)
@@ -45,32 +44,39 @@ class AnalyticsGraph:
         return {**state, "route": route}
 
     async def _process_initial(self, state: Dict[str, Any]) -> Dict[str, Any]:
+        messages = state.get("messages", [])
         msg = "Hello! I'm your analytics assistant. I can help you understand your data and generate insights!"
-        clean_state = append_message(state, "assistant", msg)
-        clean_state["message"] = msg
-        clean_state["message_type"] = "assistant"
-        return clean_state
+        
+        messages.append(AIMessage(content=msg, name="analytics_assistant"))
+        
+        return {
+            "messages": messages,
+            "message_type": "assistant"
+        }
 
     async def _process_user_message(self, state: Dict[str, Any]) -> Dict[str, Any]:
+        messages = state.get("messages", [])
         msg = "Analytics: Let me analyze that for you! What metrics are you interested in?"
-        clean_state = append_message(state, "assistant", msg)
-        clean_state["message"] = msg
-        clean_state["message_type"] = "assistant"
-        return clean_state
+        
+        messages.append(AIMessage(content=msg, name="analytics_assistant"))
+        
+        return {
+            "messages": messages,
+            "message_type": "assistant"
+        }
 
     async def _health_check(self, state: Dict[str, Any]) -> Dict[str, Any]:
+        messages = state.get("messages", [])
         msg = "Analytics module healthy"
-        clean_state = append_message(state, "assistant", msg)
-        clean_state["message"] = msg
-        clean_state["message_type"] = "assistant"
-        clean_state["status"] = "ok"
-        return clean_state
+        
+        messages.append(AIMessage(content=msg, name="analytics_assistant"))
+        
+        return {
+            "messages": messages,
+            "message_type": "assistant",
+            "status": "ok"
+        }
 
     async def invoke(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         result = await self.graph.ainvoke(input_data)
-
-        session_id = input_data.get("session_id")
-        if session_id and result:
-            update_partial_state(session_id, result)
-
-        return result
+        return result  # Removed update_partial_state - handled in chat_service.py

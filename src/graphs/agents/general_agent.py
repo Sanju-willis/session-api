@@ -1,10 +1,9 @@
 # src\graphs\agents\general_agent.py
 from langchain.agents import create_openai_functions_agent, AgentExecutor
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_openai import ChatOpenAI
 from langchain_core.tools import tool
-from src.config import settings
 from typing import Dict, Any
+from src.core.llm_client import get_llm_client
 
 @tool
 def get_user_info(user_id: str) -> Dict[str, Any]:
@@ -64,11 +63,7 @@ You can help with any questions about their business, the platform, or general a
 ])
 
 def get_general_agent():
-    llm = ChatOpenAI(
-        openai_api_key=settings.OPENAI_API_KEY,
-        model="gpt-4",
-        temperature=0.7,
-    )
+    llm = get_llm_client()
 
     tools = [
         get_user_info,

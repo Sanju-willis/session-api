@@ -1,10 +1,9 @@
 # src\services\chat_service.py
 from src.graphs import HomeGraph, SocialGraph, AnalyticsGraph
 from src.types_ import Module
-from src.utils import setup_logging, get_session_state
-from pprint import pprint
-
-logger = setup_logging(__name__)
+from src.utils import get_session_state, log_error, update_partial_state
+from langchain_core.messages import HumanMessage
+from typing import Dict, Any
 
 
 class AgentRouter:
@@ -18,9 +17,8 @@ class AgentRouter:
     def get_graph(self, module: str):
         try:
             return self._graphs[Module(module)]
-
         except (ValueError, KeyError):
-            logger.warning(f"Unknown module: {module}, defaulting to HOME")
+            log_error(f"Unknown module: {module}, defaulting to HOME")
             return self._graphs[Module.HOME]
 
 
@@ -28,33 +26,44 @@ class AgentRouter:
 agent_router = AgentRouter()
 
 
-async def process_agent_message(session_id: str, message: str) -> str:
+async def process_agent_message(session_id: str, message: str) -> Dict[str, Any]:
+   
     try:
+        # Get session state
         state = get_session_state(session_id)
         if not state:
-            return "I couldn't find your session. Please try again."
-        # print(f"Processing message for session {session_id}: {state}")
-        pprint(state)
+            log_error(f"No session found for ID: {session_id}")
+            return _error_response("Session not found")
 
-        module = state.get("module")
-        graph = agent_router.get_graph(module)
+        # Get graph and prepare messages
+        graph = agent_router.get_graph(state.get("module"))
+        messages = state.get("messages", [])
+        messages.append(HumanMessage(content=message))
 
+        # Invoke graph
         response = await graph.invoke(
             {
                 "session_id": session_id,
                 "user_message": message,
-                "module": module,
-                "stage": state.get("stage", "initial"),
+                "module": state.get("module"),
+                "stage": state.get("stage"),
                 "next_action": state.get("next_action", ""),
                 "user_id": state.get("user_id"),
                 "company_id": state.get("company_id"),
-                "messages": state.get("messages", []),
+                "messages": messages,
             }
         )
-        # print("🧠 Response from graph:")
-        # pprint(response, indent=2, width=100)
+
+        # Update session state
+        update_partial_state(session_id, response)
 
         return response
+
     except Exception as e:
-        logger.error(f"Error processing message for session {session_id}: {e}")
-        return "I'm sorry, I encountered an error. Please try again."
+        log_error(f"Error processing message for session {session_id}: {e}")
+        return _error_response("Processing error occurred")
+
+
+def _error_response(error_msg: str) -> Dict[str, Any]:
+    """Create standardized error response"""
+    return {"messages": [], "stage": "error", "next_action": "retry", "error": error_msg}

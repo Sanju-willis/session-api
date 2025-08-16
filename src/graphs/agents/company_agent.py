@@ -1,8 +1,8 @@
 # src\graphs\agents\company_agent.py
 from langchain.agents import create_openai_functions_agent, AgentExecutor
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_openai import ChatOpenAI
-from src.config import settings
+from src.core.llm_client import get_llm_client
+
 from .tools.company_tools import (
     save_company_basic_info,
     save_company_contact_info,
@@ -39,11 +39,7 @@ Always check progress first, then guide step by step."""),
 ])
 
 def get_company_agent():
-    llm = ChatOpenAI(
-        openai_api_key=settings.OPENAI_API_KEY,
-        model="gpt-4",
-        temperature=0,
-    )
+    llm = get_llm_client()
 
     tools = [
         fill_company_profile,

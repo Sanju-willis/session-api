@@ -1,9 +1,8 @@
 # src\graphs\agents\product_agent.py
 from langchain.agents import create_openai_functions_agent, AgentExecutor
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_openai import ChatOpenAI
 from langchain.tools import tool
-from src.config import settings
+from src.core.llm_client import get_llm_client
 
 @tool
 async def collect_product_info() -> str:
@@ -51,11 +50,7 @@ Example first response: "Let me check your current product setup progress first.
 ])
 
 def get_product_agent():
-    llm = ChatOpenAI(
-        openai_api_key=settings.OPENAI_API_KEY,
-        model="gpt-4",
-        temperature=0,
-    )
+    llm = get_llm_client()
 
     tools = [
         collect_product_info,

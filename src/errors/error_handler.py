@@ -1,39 +1,24 @@
 # src\errors\error_handler.py
 from fastapi import Request
-from fastapi.responses import JSONResponse
-import traceback
-import logging
-import os
-
-# Set up clean logging
-logging.basicConfig(level=logging.ERROR, format="%(asctime)s - %(levelname)s - %(message)s")
-logger = logging.getLogger(__name__)
+from src.errors.shared import http_error, extract_location, log_error
+from src.config import settings
 
 
 async def global_exception_handler(request: Request, exc: Exception):
     error_type = exc.__class__.__name__
     error_msg = str(exc)
+    location = extract_location(exc)
 
-    try:
-        tb = traceback.extract_tb(exc.__traceback__)
-        file_name = tb[-1].filename.split("/")[-1]
-        line_num = tb[-1].lineno
-    except Exception:
-        file_name = "unknown"
-        line_num = "?"
+    log_error(error_type, error_msg, location, str(request.url))
 
-    logger.error(f"{error_type}: {error_msg} | {file_name}:{line_num}")
+    if settings.DEBUG:
+        import traceback
 
-    debug_mode = os.getenv("DEBUG", "false").lower() == "true"
-    if debug_mode:
         traceback.print_exc()
 
-    return JSONResponse(
+    return http_error(
+        message=error_msg if settings.DEBUG else "Internal server error",
+        code=error_type,
         status_code=getattr(exc, "status_code", 500),
-        content={
-            "error": error_type,
-            "message": error_msg if debug_mode else "Internal server error",
-            "location": f"{file_name}:{line_num}",
-            "path": str(request.url),
-        },
+        meta={"location": location, "path": str(request.url)},
     )

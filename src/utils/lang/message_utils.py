@@ -33,12 +33,4 @@ def append_message(
 
     return clean_state
 
-    return {
-        "user_id": state.get("user_id"),
-        "company_id": state.get("company_id"),
-        "module": state.get("module"),
-        "stage": state.get("stage"),
-        "step": state.get("step", 1),
-        "messages": messages,
-        "next_action": state.get("next_action", ""),
-    }
+   

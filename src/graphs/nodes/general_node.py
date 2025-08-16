@@ -4,7 +4,7 @@ from ..agents import get_general_agent
 from src.utils import append_message
 
 async def general_node(state: Dict[str, Any]) -> Dict[str, Any]:
-    """Handle general conversations after setup is complete"""
+
     agent = get_general_agent()
     messages = state.get("messages", [])
     
