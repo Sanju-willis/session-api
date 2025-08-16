@@ -1,39 +1,39 @@
 # src\graphs\nodes\product_node.py
 from typing import Dict, Any
+from langchain_core.messages import AIMessage
 from ..agents import get_product_agent
-from src.utils import append_message
+from ..state import CustomState
 
-
-async def product_node(state: Dict[str, Any]) -> Dict[str, Any]:
-    """Handle product information collection with multi-step guidance"""
+async def product_node(state: CustomState) -> Dict[str, Any]:
+    
     agent = get_product_agent()
-    messages = state.get("messages", [])
-
-    # Get the latest user message or provide default
-    if messages:
-        user_input = messages[-1]["content"] if messages[-1]["role"] == "user" else "Start my product setup"
+    
+    # Handle both dict and object (defensive coding)
+    if isinstance(state, dict):
+        messages = state.get("messages", [])
     else:
-        user_input = "Start my product setup"
-
+        messages = state.messages or []
+    
     try:
-        response = await agent.ainvoke(
-            {"input": user_input, "chat_history": [(msg["role"], msg["content"]) for msg in messages[:-1] if messages]}
-        )
-
-        final_message = response["output"]
-
-        # Check if agent used tools
-        steps_used = len(response.get("intermediate_steps", []))
-        print(f"Product agent used {steps_used} steps")
-
-        # If no tools used, prompt more specifically
-        if steps_used == 0 and not messages:
-            final_message = (
-                "Let me check your current product setup progress first, then guide you through adding your products."
-            )
-
+        # Call agent with messages directly
+        response = await agent.ainvoke({"messages": messages})
+        
+        # AgentExecutor returns dict with 'output' key
+        agent_response = response["output"]
+        
     except Exception as e:
-        print(f"Error in product agent: {e}")
-        final_message = "Let me help you set up your products. First, let me check what information we already have."
-
-    return append_message(state, "assistant", final_message, node="product_agent", message_type="assistant")
+        print(f"Product agent error: {e}")
+        agent_response = "Let me help you set up your products. First, let me check what information we already have."
+    
+    # Add AI response to existing messages
+    messages.append(AIMessage(
+        content=agent_response,
+        name="product_agent"
+    ))
+    
+    result = {
+        "messages": messages,
+        "stage": "company_completed"
+    }
+    
+    return result

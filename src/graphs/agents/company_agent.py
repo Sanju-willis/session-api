@@ -34,7 +34,7 @@ TOOLS AVAILABLE:
 - get_company_progress: Check what's completed
 
 Always check progress first, then guide step by step."""),
-    ("human", "{input}"),
+    ("placeholder", "{messages}"),  # ← Changed from {input}
     ("placeholder", "{agent_scratchpad}"),
 ])
 
@@ -56,7 +56,7 @@ def get_company_agent():
     return AgentExecutor(
         agent=agent,
         tools=tools,
-        verbose=True,
+        verbose=True,  # ← Turn off verbose to reduce logs
         return_intermediate_steps=True,
         max_iterations=5,
         handle_parsing_errors=True

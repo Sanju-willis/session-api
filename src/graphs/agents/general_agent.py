@@ -58,7 +58,7 @@ APPROACH:
 - Answer questions based on their completed setup
 
 You can help with any questions about their business, the platform, or general assistance."""),
-    ("human", "{input}"),
+    ("placeholder", "{messages}"),  # ← Changed from {input}
     ("placeholder", "{agent_scratchpad}"),
 ])
 
@@ -77,7 +77,7 @@ def get_general_agent():
     return AgentExecutor(
         agent=agent,
         tools=tools,
-        verbose=True,
+        verbose=True,  # ← Turn off verbose
         return_intermediate_steps=True,
         max_iterations=3,
         handle_parsing_errors=True

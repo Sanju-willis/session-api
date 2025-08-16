@@ -4,6 +4,7 @@ from typing import Dict, Any, Optional
 from src.core import LangGraphManager
 from src.utils import setup_logging
 
+
 logger = setup_logging(__name__)
 
 
@@ -26,7 +27,7 @@ def build_initial_state(
         module=module,
         thread_type=thread_type,
         messages=[],
-        stage=stage,  # ✅ Determined internally
+        stage=stage, 
         step=1,
         context=context or {},
     )

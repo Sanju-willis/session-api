@@ -1,42 +1,39 @@
 # src\graphs\nodes\general_node.py
 from typing import Dict, Any
+from langchain_core.messages import AIMessage
 from ..agents import get_general_agent
-from src.utils import append_message
+from ..state import CustomState
 
-async def general_node(state: Dict[str, Any]) -> Dict[str, Any]:
-
-    agent = get_general_agent()
-    messages = state.get("messages", [])
+async def general_node(state: CustomState) -> Dict[str, Any]:
     
-    # Get the latest user message or provide default
-    if messages:
-        user_input = messages[-1]["content"] if messages[-1]["role"] == "user" else "I need help with general questions"
+    agent = get_general_agent()
+    
+    # Handle both dict and object (defensive coding)
+    if isinstance(state, dict):
+        messages = state.get("messages", [])
     else:
-        user_input = "How can I help you with your Kordor platform today?"
+        messages = state.messages or []
     
     try:
-        response = await agent.ainvoke({
-            "input": user_input,
-            "chat_history": [
-                (msg["role"], msg["content"]) 
-                for msg in messages[:-1] if messages
-            ]
-        })
+        # Call agent with messages directly
+        response = await agent.ainvoke({"messages": messages})
         
-        final_message = response["output"]
-        
-        # Log tool usage
-        steps_used = len(response.get("intermediate_steps", []))
-        print(f"General agent used {steps_used} steps")
+        # AgentExecutor returns dict with 'output' key
+        agent_response = response["output"]
         
     except Exception as e:
-        print(f"Error in general agent: {e}")
-        final_message = "Hello! I'm here to help you with any questions about your business or the Kordor platform. What can I assist you with today?"
+        print(f"General agent error: {e}")
+        agent_response = "Hello! I'm here to help you with any questions about your business or the Kordor platform. What can I assist you with today?"
     
-    return append_message(
-        state, 
-        "assistant", 
-        final_message, 
-        node="general_agent", 
-        message_type="assistant"
-    )
+    # Add AI response to existing messages
+    messages.append(AIMessage(
+        content=agent_response,
+        name="general_agent"
+    ))
+    
+    result = {
+        "messages": messages,
+        "stage": "setup_complete"
+    }
+    
+    return result

@@ -45,10 +45,9 @@ IMPORTANT RULES:
 - Be conversational but systematic
 
 Example first response: "Let me check your current product setup progress first." Then use get_product_progress tool."""),
-    ("human", "{input}"),
+    ("placeholder", "{messages}"),  # ← Changed from {input}
     ("placeholder", "{agent_scratchpad}"),
 ])
-
 def get_product_agent():
     llm = get_llm_client()
 
